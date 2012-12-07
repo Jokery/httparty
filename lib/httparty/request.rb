@@ -132,6 +132,7 @@ module HTTParty
     def setup_raw_request
       @raw_request = http_method.new(uri.request_uri)
       @raw_request.body = body if body
+      @raw_request.content_length = body ? body.length : 0
       @raw_request.initialize_http_header(options[:headers])
       @raw_request.basic_auth(username, password) if options[:basic_auth]
       setup_digest_auth if options[:digest_auth]
@@ -140,6 +141,7 @@ module HTTParty
     def setup_digest_auth
       auth_request = http_method.new(uri.request_uri)
       auth_request.initialize_http_header(options[:headers])
+      auth_request.content_length = 0
       res = http.request(auth_request)
 
       if res['www-authenticate'] != nil && res['www-authenticate'].length > 0
